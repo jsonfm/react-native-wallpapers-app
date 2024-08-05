@@ -43,18 +43,27 @@ export const usefetchImages = ({ page = 1, perPage = 25, safeSearch = true, edit
     const fetchData = async () => {
       setLoading(true);
       try {
+        const headers = {
+          "Content-Type": "application/json",
+          Accept: "*/*",
+          "X-Requested-With": "XMLHttpRequest",
+        };
         const url = `${apiURL}&safesearch=${safeSearch}&editors_choice=${editors}&page=${page}&per_page=${perPage}`;
 
-        const response = await fetch(url, { method: "GET", mode: "no-cors" });
-        if (!response.ok) throw `error: ${await response.json()}`;
-        const data: ImageDataResponseI = await response.json();
+        const data = await fetch(url, {
+          method: "GET",
+          headers,
+        }).then((res) => res.json());
+
         setData(data);
       } catch (error: any) {
+        console.log({ error });
         setError(`${error}`);
       }
       setLoading(false);
     };
     fetchData();
+    // setTimeout(() => , 4000);
   }, []);
   return {
     data,

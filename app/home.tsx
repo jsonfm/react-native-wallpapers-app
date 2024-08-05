@@ -20,21 +20,22 @@ const Home = () => {
 
   return (
     <SafeAreaView className="flex-1 px-4 md:py-12">
-      <View className="flex-row items-center justify-between mb-4">
+      <View className="flex-row items-center justify-between  py-4">
         <Text className="font-bold text-2xl">Pixels</Text>
         <FontAwesome6 name="bars-staggered" size={22} />
       </View>
       <ScrollView contentContainerStyle={{ gap: 15 }}>
-        <View className="flex-row justify-between items-center  border-gray-300 bg-white rounded-xl px-4 py-2">
+        <View className="flex-row justify-between items-center gap-1  border-gray-300 bg-white rounded-xl px-4 py-2">
           <Feather name="search" size={24} />
           <TextInput
             placeholder="Search..."
-            className="flex-1 flex-row items-center px-4 py-2 rounded-sm"
+            className="flex-1 flex-row items-center px-4 py-2 rounded-sm shadow-none outline-none border-none focus:outline-none active:outline-none focus:border-none"
             onChangeText={(text) => setSearch(text)}
             ref={searchInputRef}
+            style={{ outlineStyle: "none" } as any}
           />
           {search && (
-            <Pressable className="bg-neutral-300 p-4 rounded-md">
+            <Pressable className="bg-neutral-300 p-1 rounded-md">
               <Ionicons name="close" size={24} />
             </Pressable>
           )}

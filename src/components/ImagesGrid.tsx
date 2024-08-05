@@ -14,7 +14,7 @@ export const ImagesGrid = ({ images }: Props) => {
     <View>
       <MasonryFlashList
         data={images}
-        numColumns={2}
+        numColumns={columns}
         contentContainerStyle={styles.listContainer}
         renderItem={({ item, index }) => <ImageCard index={index} image={item} columns={columns} />}
         estimatedItemSize={200}
