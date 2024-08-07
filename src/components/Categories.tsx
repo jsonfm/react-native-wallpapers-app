@@ -41,7 +41,7 @@ export const CategoryItem = ({
   setCurrentCategory: Dispatch<SetStateAction<string | null>>;
 }) => {
   const isActive = !!currentCategory ? currentCategory == item : false;
-  const activeColorClassName = isActive ? "bg-white" : "bg-neutral-200";
+  const activeColorClassName = isActive ? "bg-neutral-600" : "bg-white";
   const updateCurrentCategory = () => {
     if (isActive) {
       setCurrentCategory(null);
@@ -57,7 +57,7 @@ export const CategoryItem = ({
         .springify()}
     >
       <Pressable onPress={updateCurrentCategory} className={`${activeColorClassName} rounded-lg px-4 py-2`}>
-        <Text className="text-base font-bold">{item}</Text>
+        <Text className={`text-base font-bold ${isActive && "text-white"}`}>{item}</Text>
       </Pressable>
     </Animated.View>
   );

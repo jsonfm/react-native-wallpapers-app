@@ -34,7 +34,14 @@ export interface ImageDataResponseI {
 
 const apiURL = `${Config.PIXABAY_API_URL}?key=${Config.PIXABAY_API_KEY}`;
 
-export const usefetchImages = ({ page = 1, perPage = 25, safeSearch = true, editors = true } = {}) => {
+export const usefetchImages = ({
+  page = 1,
+  perPage = 25,
+  safeSearch = true,
+  editors = true,
+  q = "",
+  category = "",
+} = {}) => {
   const [data, setData] = useState<ImageDataResponseI | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -48,7 +55,9 @@ export const usefetchImages = ({ page = 1, perPage = 25, safeSearch = true, edit
           Accept: "*/*",
           "X-Requested-With": "XMLHttpRequest",
         };
-        const url = `${apiURL}&safesearch=${safeSearch}&editors_choice=${editors}&page=${page}&per_page=${perPage}`;
+        const url = `${apiURL}&safesearch=${safeSearch}&editors_choice=${editors}&page=${page}&per_page=${perPage}${
+          q.length > 0 ? `&q=${q}` : ""
+        }${category.length > 0 ? `&category=${category}` : ""}`;
 
         const data = await fetch(url, {
           method: "GET",
@@ -63,8 +72,8 @@ export const usefetchImages = ({ page = 1, perPage = 25, safeSearch = true, edit
       setLoading(false);
     };
     fetchData();
-    // setTimeout(() => , 4000);
-  }, []);
+    // setTimeout(() => , 4000);g
+  }, [page, q, category]);
   return {
     data,
     loading,

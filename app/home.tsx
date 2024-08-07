@@ -1,17 +1,38 @@
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Categories } from "@/components/Categories";
 import { ImagesGrid } from "@/components/ImagesGrid";
 import { usefetchImages, ImageDataResponseI, ImageDataI } from "@/data/images";
 import { Feather, FontAwesome6, Ionicons } from "@expo/vector-icons";
-import { useEffect, useRef, useState } from "react";
-import { View, Text, ScrollView, TextInput, Pressable } from "react-native";
+import { View, Text, ScrollView, TextInput, Pressable, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { debounce } from "lodash";
 
 const Home = () => {
-  const [search, setSearch] = useState("");
-  const searchInputRef = useRef(null);
+  const searchInputRef = useRef<TextInput>(null);
   const [currentCategory, setCurrentCategory] = useState<string | null>(null);
   const [images, setImages] = useState<ImageDataI[]>([]);
-  const { data, loading, error } = usefetchImages();
+  const [page, setPage] = useState(1);
+  const [searchText, setSearchText] = useState("");
+
+  const { data, loading, error } = usefetchImages({ page, q: searchText, category: currentCategory || "" });
+
+  const updateSearchText = (text: string) => {
+    setSearchText(text);
+    if (text.length > 2) {
+      setImages([]);
+    }
+    if (text.length == 0) {
+      setPage(1);
+      setImages([]);
+    }
+  };
+
+  const updateSearchTextDebounced = useCallback(debounce(updateSearchText, 400), []);
+
+  const clearSearchTextAndInput = () => {
+    searchInputRef?.current?.clear();
+    setSearchText("");
+  };
 
   useEffect(() => {
     if (!data?.hits?.length || !!loading || !!error) return;
@@ -30,12 +51,12 @@ const Home = () => {
           <TextInput
             placeholder="Search..."
             className="flex-1 flex-row items-center px-4 py-2 rounded-sm shadow-none outline-none border-none focus:outline-none active:outline-none focus:border-none"
-            onChangeText={(text) => setSearch(text)}
+            onChangeText={updateSearchTextDebounced}
             ref={searchInputRef}
             style={{ outlineStyle: "none" } as any}
           />
-          {search && (
-            <Pressable className="bg-neutral-300 p-1 rounded-md">
+          {searchText?.length > 0 && (
+            <Pressable className="bg-neutral-300 p-1 rounded-md" onPress={clearSearchTextAndInput}>
               <Ionicons name="close" size={24} />
             </Pressable>
           )}
@@ -43,7 +64,10 @@ const Home = () => {
         <View>
           <Categories currentCategory={currentCategory} setCurrentCategory={setCurrentCategory} />
         </View>
-        <View>{!!images?.length && !loading && <ImagesGrid images={images} />}</View>
+        <View>
+          {!!images?.length && !loading && <ImagesGrid images={images} />}
+          {!!loading && <ActivityIndicator size="large" />}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
