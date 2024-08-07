@@ -6,6 +6,8 @@ import { Feather, FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { View, Text, ScrollView, TextInput, Pressable, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { debounce } from "lodash";
+import { FiltersModal } from "@/components/FiltersModal";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 const Home = () => {
   const searchInputRef = useRef<TextInput>(null);
@@ -13,6 +15,7 @@ const Home = () => {
   const [images, setImages] = useState<ImageDataI[]>([]);
   const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState("");
+  const modalRef = useRef<BottomSheetModal>(null);
 
   const { data, loading, error } = usefetchImages({ page, q: searchText, category: currentCategory || "" });
 
@@ -34,6 +37,14 @@ const Home = () => {
     setSearchText("");
   };
 
+  const openFiltersModal = () => {
+    modalRef?.current?.present();
+  };
+
+  const closeFiltersModal = () => {
+    modalRef?.current?.close();
+  };
+
   useEffect(() => {
     if (!data?.hits?.length || !!loading || !!error) return;
     setImages([...data.hits]);
@@ -43,7 +54,9 @@ const Home = () => {
     <SafeAreaView className="flex-1 px-4 md:py-12">
       <View className="flex-row items-center justify-between  py-4">
         <Text className="font-bold text-2xl">Pixels</Text>
-        <FontAwesome6 name="bars-staggered" size={22} />
+        <Pressable onPress={openFiltersModal}>
+          <FontAwesome6 name="bars-staggered" size={22} />
+        </Pressable>
       </View>
       <ScrollView contentContainerStyle={{ gap: 15 }}>
         <View className="flex-row justify-between items-center gap-1  border-gray-300 bg-white rounded-xl px-4 py-2">
@@ -69,6 +82,7 @@ const Home = () => {
           {!!loading && <ActivityIndicator size="large" />}
         </View>
       </ScrollView>
+      <FiltersModal ref={modalRef} />
     </SafeAreaView>
   );
 };
