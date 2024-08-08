@@ -41,6 +41,7 @@ export const usefetchImages = ({
   editors = true,
   q = "",
   category = "",
+  filters = {},
 } = {}) => {
   const [data, setData] = useState<ImageDataResponseI | null>(null);
   const [loading, setLoading] = useState(true);

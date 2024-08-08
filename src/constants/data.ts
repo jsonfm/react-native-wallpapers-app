@@ -27,6 +27,8 @@ const filters = {
   colors: ["red", "orange", "yellow", "green", "turquoise", "blue", "pink", "gray", "black", "brown", "white"],
 };
 
+export type FiltersKeyType = keyof typeof filters;
+
 export const data = {
   categories,
   filters,

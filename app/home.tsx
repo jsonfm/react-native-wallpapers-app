@@ -8,6 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { debounce } from "lodash";
 import { FiltersModal } from "@/components/FiltersModal";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { FiltersKeyType } from "@/constants/data";
 
 const Home = () => {
   const searchInputRef = useRef<TextInput>(null);
@@ -15,6 +16,7 @@ const Home = () => {
   const [images, setImages] = useState<ImageDataI[]>([]);
   const [page, setPage] = useState(1);
   const [searchText, setSearchText] = useState("");
+  const [filters, setFilters] = useState<Record<FiltersKeyType, string>>({} as any);
   const modalRef = useRef<BottomSheetModal>(null);
 
   const { data, loading, error } = usefetchImages({ page, q: searchText, category: currentCategory || "" });
@@ -82,7 +84,7 @@ const Home = () => {
           {!!loading && <ActivityIndicator size="large" />}
         </View>
       </ScrollView>
-      <FiltersModal ref={modalRef} />
+      <FiltersModal ref={modalRef} filters={filters} setFilters={setFilters} />
     </SafeAreaView>
   );
 };
