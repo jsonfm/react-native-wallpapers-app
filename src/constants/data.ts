@@ -29,6 +29,8 @@ const filters = {
 
 export type FiltersKeyType = keyof typeof filters;
 
+export type FilterType = Record<FiltersKeyType, string>;
+
 export const data = {
   categories,
   filters,

@@ -1,3 +1,4 @@
+import { FiltersKeyType } from "@/constants/data";
 import { Config } from "@/core/config";
 import { useEffect, useState } from "react";
 
@@ -34,6 +35,16 @@ export interface ImageDataResponseI {
 
 const apiURL = `${Config.PIXABAY_API_URL}?key=${Config.PIXABAY_API_KEY}`;
 
+interface Props {
+  page?: number;
+  perPage?: number;
+  safeSearch?: boolean;
+  editors?: boolean;
+  q?: string;
+  category?: string;
+  filters?: Record<FiltersKeyType, string>;
+}
+
 export const usefetchImages = ({
   page = 1,
   perPage = 25,
@@ -41,8 +52,13 @@ export const usefetchImages = ({
   editors = true,
   q = "",
   category = "",
-  filters = {},
-} = {}) => {
+  filters = {
+    order: "",
+    orientation: "",
+    type: "",
+    colors: "",
+  },
+}: Props = {}) => {
   const [data, setData] = useState<ImageDataResponseI | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -56,10 +72,19 @@ export const usefetchImages = ({
           Accept: "*/*",
           "X-Requested-With": "XMLHttpRequest",
         };
-        const url = `${apiURL}&safesearch=${safeSearch}&editors_choice=${editors}&page=${page}&per_page=${perPage}${
+        let url = `${apiURL}&safesearch=${safeSearch}&editors_choice=${editors}&page=${page}&per_page=${perPage}${
           q.length > 0 ? `&q=${q}` : ""
         }${category.length > 0 ? `&category=${category}` : ""}`;
 
+        for (const filterName in filters) {
+          const filterValue = filters[filterName as FiltersKeyType];
+          if (!!filterValue?.length) {
+            const filter = `&${filterName}=${filterValue}`;
+            console.log({ filter });
+            url += filter;
+          }
+        }
+        console.log({ url });
         const data = await fetch(url, {
           method: "GET",
           headers,
@@ -73,8 +98,8 @@ export const usefetchImages = ({
       setLoading(false);
     };
     fetchData();
-    // setTimeout(() => , 4000);g
-  }, [page, q, category]);
+  }, [page, q, category, filters]);
+
   return {
     data,
     loading,
